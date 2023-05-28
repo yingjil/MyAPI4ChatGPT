@@ -5,7 +5,14 @@ from functools import lru_cache
 
 import openai
 
+from DouyinAccessTokenClient import DouyinAccessTokenClient
+from DouyinConentCheckerClient import DouyinConentCheckerClient
+from configs import DOUYIN_ACCESS_TOKEN_CONFIG, DOUYIN_CONTENT_CHECK_CONFIG
+
 openai.api_key = os.environ['OPENAI_API_KEY']
+
+douyinAccessTokenClient = DouyinAccessTokenClient(DOUYIN_ACCESS_TOKEN_CONFIG)
+conent_checker = DouyinConentCheckerClient(DOUYIN_CONTENT_CHECK_CONFIG, douyinAccessTokenClient)
 
 
 def call_openai(question):
@@ -39,7 +46,19 @@ def handler(event, context):
     prompt = body['prompt']
 
     try:
+        if conent_checker.check(prompt):
+            return {
+                'statusCode': 500,
+                'body': "输出包含违规内容，请稍后重试"
+            }
+
         answer = call_openai_with_cache(prompt)
+
+        if conent_checker.check(answer):
+            return {
+                'statusCode': 500,
+                'body': "输出包含违规内容，请稍后重试"
+            }
 
         return {
             'statusCode': 200,

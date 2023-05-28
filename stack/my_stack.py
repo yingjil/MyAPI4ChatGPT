@@ -4,7 +4,7 @@ import subprocess
 from aws_cdk import (
     Stack,
     aws_lambda as _lambda,
-    CfnResource, CfnOutput, Duration, aws_dynamodb, aws_apigateway, Aws,
+    CfnOutput, Duration, aws_apigateway, Aws,
 )
 from constructs import Construct
 
@@ -27,14 +27,14 @@ class MyStack(Stack):
             ],
             environment={  # ADD THIS, FILL IT FOR ACTUAL VALUE
                 "OPENAI_API_KEY": os.environ['OPENAI_API_KEY'],
-
+                "DOUYIN_SECRET_ttbaedcc5025d2e24701": os.environ['DOUYIN_SECRET_ttbaedcc5025d2e24701'],
             },
 
         )
 
         my_api = aws_apigateway.RestApi(self, "my_api",
-                                                 rest_api_name="my_api",
-                                                 )
+                                        rest_api_name="my_api",
+                                        )
 
         lambda_integration = aws_apigateway.LambdaIntegration(my_lambda,
                                                               request_templates={
