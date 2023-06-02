@@ -9,6 +9,7 @@ from DouyinAccessTokenClient import DouyinAccessTokenClient
 from DouyinConentCheckerClient import DouyinConentCheckerClient
 from configs import DOUYIN_ACCESS_TOKEN_CONFIG, DOUYIN_CONTENT_CHECK_CONFIG
 
+openai.api_base = 'https://api.openai-asia.com/v1'
 openai.api_key = os.environ['OPENAI_API_KEY']
 
 douyinAccessTokenClient = DouyinAccessTokenClient(DOUYIN_ACCESS_TOKEN_CONFIG)
@@ -49,7 +50,7 @@ def handler(event, context):
         if conent_checker.check(prompt):
             return {
                 'statusCode': 500,
-                'body': "输出包含违规内容，请稍后重试"
+                'body': "输入包含违规内容，请修改重试"
             }
 
         answer = call_openai_with_cache(prompt)

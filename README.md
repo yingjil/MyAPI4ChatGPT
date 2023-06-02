@@ -52,7 +52,7 @@ MyStack.myapiEndpointF52D9E64 = https://<your api prefix>.execute-api.us-west-2.
 # You can use the API now
 
 ```
-$ curl -X POST https://<your api prefix>.execute-api.us-west-2.amazonaws.com/prod/ -H 'content-type: application/json' --data '{"prompt":"Hello"}'
+$ curl -X POST https://k1l578sa24.execute-api.us-west-2.amazonaws.com/prod/ -H 'content-type: application/json' --data '{"prompt":"Hello"}'
 
 Hi there! How can I assist you today?
 ```
