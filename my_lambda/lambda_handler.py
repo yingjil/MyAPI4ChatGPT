@@ -4,10 +4,35 @@ import time
 from functools import lru_cache
 
 import openai
+import pymysql
 
 from DouyinAccessTokenClient import DouyinAccessTokenClient
 from DouyinConentCheckerClient import DouyinConentCheckerClient
 from configs import DOUYIN_ACCESS_TOKEN_CONFIG, DOUYIN_CONTENT_CHECK_CONFIG
+
+# rds settings
+rds_host = os.environ['MYSQL_HOST']
+user_name = os.environ['MYSQL_USER']
+password = os.environ['MYSQL_PASSWORD']
+db_name = "cloudlog"
+
+# create the database connection outside of the handler to allow connections to be
+# re-used by subsequent function invocations.
+
+conn = pymysql.connect(host=rds_host, user=user_name, passwd=password, db=db_name, connect_timeout=5)
+
+
+def update_travel_log(key, value):
+    print("update_travel_log")
+
+    try:
+        with conn.cursor() as cur:
+            cur.execute("INSERT INTO TravelLog (`key`, `value`) VALUES (%s, %s)", (key, value))
+            conn.commit()
+    except Exception as e:
+        print(e)
+        raise
+
 
 openai.api_base = 'https://api.openai-asia.com/v1'
 openai.api_key = os.environ['OPENAI_API_KEY']
@@ -54,6 +79,7 @@ def handler(event, context):
             }
 
         answer = call_openai_with_cache(prompt)
+        update_travel_log(prompt, answer)
 
         if conent_checker.check(answer):
             return {
